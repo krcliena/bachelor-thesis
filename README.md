@@ -1,1 +1,1 @@
-# FRIA-CM
+# fair
