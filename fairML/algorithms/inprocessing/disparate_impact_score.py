@@ -1,5 +1,5 @@
-import fair.algorithms.inprocessing.fair_classification.main as main 
-import fair.algorithms.inprocessing.fair_classification.utils as ut
+import fairML.algorithms.inprocessing.fair_classification.main as main 
+import fairML.algorithms.inprocessing.fair_classification.utils as ut
 import numpy as np
 import pandas as pd
 
