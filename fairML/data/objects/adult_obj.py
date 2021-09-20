@@ -76,9 +76,7 @@ class AdultData():
                                                             self.sensitive_attributes.drop(columns = sensitive),
                                                             train_size = train_size,
                                                             stratify = self.y)
-        #Reset index, why do we not reset y_train and y_test as well?
-        #X_train = X_train.reset_index(drop = True)
-        #X_test = X_test.reset_index(drop = True)
+
         S_train = S_train.reset_index(drop = True)
         S_test = S_test.reset_index(drop = True)
         S_train_num = S_train_num.reset_index(drop = True)
