@@ -1,7 +1,11 @@
 from fairlearn.reductions import GridSearch, DemographicParity, EqualizedOdds
 from sklearn.linear_model import LogisticRegression
 
-""" Create Wrapper around GridSearch approach from Agarwal et al."""
+""" Creates Wrapper around GridSearch reductions approach from Fairlearn
+    Copyright (c) Microsoft Corporation and Fairlearn contributors. 
+    Licensed under the MIT License.
+    Corresponding repository https://github.com/fairlearn/fairlearn/tree/main/fairlearn
+    """
 
 class Grid_Search():
     """Parameters
