@@ -20,8 +20,7 @@ class DisparateImpactRemover():
         ----------
             repair_level (float): Repair amount. 0.0 is no repair while 1.0 is
                 full repair.
-            sens_attr_name (str): Single sensitive attribute with which to
-                do repair.
+            sens_attr_name (str): Name of single sensitive attribute
             clf: Classifier to use for training, default is LogisticRegression()
         """
         self.columns = X_train.columns
