@@ -63,7 +63,7 @@ class Massaging():
      
         Returns
         -------
-        m (int): Massaged y_train which is used in training
+        y_mssg (int): Massaged y_train which is used in training
         """
         #np.copy(self.y_train)
         y_msg = self.y_train.copy()
