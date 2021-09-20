@@ -28,7 +28,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 class LoanDefaultsData():
-    
+    """Loan Defaults Data. 
+   See :file:`fairML/data/README.md` for raw dataset.
+   This dataset includes 30,000 instances and 23 attributes.
+   Sensitive attribute is Gender.
+   Privileged Group is Male.
+   Predicts whether an individual will default on payments.
+   
+   Data specific pre-processing is done.
+   """
     #Export preprocessed data? 
     def __init__(self, scale = True):
         
@@ -38,8 +46,6 @@ class LoanDefaultsData():
         self.sens_attr_names = ['sex']
         self.sens_group_name = 'female'
         self.non_sens_group_name = 'male'
-        #self.pos_class = 1
-        #Is this copy necessary, if I were to use self.df.replace would it be a reference to the obj?
         dataframe = self.df.copy().drop('id', axis =1)
         #column names
         attributes = ["given-credit", "sex", "education", "marital-status", "age", 
@@ -51,18 +57,11 @@ class LoanDefaultsData():
               "previous-payment-May","previous-payment-Apr", "default-payment"]
         dataframe.columns = attributes
         
-        #Individuals with "workclass" = "Never-worked" have an occupation of '?',
-        #replace these "?" with "No-occupation". Drop rest. 
-        #indices = dataframe[dataframe["workclass"] == " Never-worked"].index
-        #for index in indices:
-        #    dataframe.loc[index, 'occupation'] = ' No-occupation'
-        
         #2. Drop missing data, missing label indication: '?'
         #df_dropped = dataframe.replace(' ?', np.nan).dropna()
         
         #3. Define attributes, sensitive and target data
         self.X = dataframe.drop('default-payment', axis = 1)
-        #self.target = dataframe["default-payment"]
         # #1 equals good credit and 0 equals bad credit
         self.y = dataframe["default-payment"]
         self.sens_attributes_num = dataframe["sex"].replace({2: 0})
@@ -70,13 +69,11 @@ class LoanDefaultsData():
         #(rows,columns)
         #self.shape = dataframe.shape
         self.attributes = self.X.columns
-        #Copy of pd.get_dummies(self.X)?
         self.X_numerical = pd.get_dummies(self.X)
         #self.names = self.X_numerical.columns
         
         #4. Create numerical labels and scale data. Format: Numerical-Binary
         if scale:
-            #Is a copy necessary? 
             X_numerical = self.X_numerical.copy()
             sc = StandardScaler()
             X_preprocessed = sc.fit_transform(X_numerical)
@@ -85,6 +82,13 @@ class LoanDefaultsData():
             
     #5. Split data into training and testing data.
     def train_test_split(self, train_size = 0.8, val = None, sensitive = None):
+    """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
+        'sensitive': Choose which sensitive attribute to split on. Since there is only one, default is None.
+        Returns
+        -------
+        pd.DataFrame
+            Train and test splits on X, y, sensitive attributes S, sensitive attributes numerical S_num
+        """
         X_train, X_test, y_train, y_test, S_train, S_test, S_train_num, S_test_num = train_test_split(
                                                             self.X_preprocessed,
                                                             self.y,
