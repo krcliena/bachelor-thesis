@@ -3,8 +3,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 class GermanData():
-    
-    #Export preprocessed data? 
+"""German Statlog Data. 
+   See :file:`fairML/data/README.md` for raw dataset.
+   This dataset includes 1000 instances and 20 attributes.
+   Sensitive attributes are Age and Gender.
+   Privileged Groups are older than 25 and Male.
+   Predicts whether an individual is a good or bad credit risk.
+   
+   Data specific pre-processing is done.
+   """
     def __init__(self, scale = True):
         
         #1. Define class attributes belonging to Adult Dataset
@@ -14,8 +21,6 @@ class GermanData():
         self.sens_group_name = ['female', 'young']
         self.non_sens_group_name = ['male', 'aged']
         self.df = self.df.replace({'female': 0, 'male': 1})
-        #self.pos_class = 1
-        #Is this copy necessary, if I were to use self.df.replace would it be a reference to the obj?
         dataframe = self.df.copy()
         
         #Individuals with "workclass" = "Never-worked" have an occupation of '?',
@@ -40,8 +45,6 @@ class GermanData():
         #(rows,columns)
         #self.shape = dataframe.shape
         self.attributes = self.X.columns
-        #Copy of pd.get_dummies(self.X)?
-        #self.X_numerical = pd.get_dummies(dataframe.replace({'aged':1, 'young':0}))
         self.X_numerical = pd.get_dummies(self.X)
         self.names = self.X_numerical.columns
         
@@ -56,6 +59,14 @@ class GermanData():
             
     #5. Split data into training and testing data.
     def train_test_split(self, train_size = 0.8, val = None, sensitive = 'age'):
+        """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
+        'sensitive': Choose which sensitive attribute to split on, allowed inputs: 'sex' and 'age'
+        Returns
+        -------
+        pd.DataFrame
+            Train and test splits on X, y, sensitive attributes S, sensitive attributes numerical S_num, other sensitive attribute S_oth
+        """
+        
         X_train, X_test, y_train, y_test, S_train, S_test, S_train_num, S_test_num, S_train_oth, S_test_oth = train_test_split(
                                                                                                                 self.X_preprocessed,
                                                                                                                 self.y,
