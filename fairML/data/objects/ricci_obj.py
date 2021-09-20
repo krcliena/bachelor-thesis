@@ -50,6 +50,9 @@ class RicciData():
     #5. Split data into training and testing data.
     def train_test_split(self, train_size = 0.8, val = None, sensitive = None):
      """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
+        
+        Parameters
+        ----------
         'sensitive': Choose which sensitive attribute to split on, since only one exits, default is None.
         Returns
         -------
