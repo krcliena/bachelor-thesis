@@ -3,7 +3,10 @@ import fairlearn.postprocessing as postproc
 import fairlearn.reductions as red
 
 
-""" Create Wrapper around Equalized of Opportunity approach from Hardt et al."""
+"""Create Wrapper around Equalized of Opportunity approach from Hardt et al. using fairlearn's implementation of Equality of Opportunity.
+   Reference: Hardt, Moritz, Eric Price, and Nati Srebro. "Equality of opportunity in supervised learning." 
+   Advances in neural information processing systems 29 (2016) 
+   """
 
 class EqualityOfOpportunity():
     """Parameters
