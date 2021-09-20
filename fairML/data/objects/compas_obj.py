@@ -4,7 +4,17 @@ from sklearn.preprocessing import StandardScaler
 
 class CompasData():
     
-    #Export preprocessed data? 
+"""ProPublica Recidivism Compas dataset. 
+   See :file:`fairML/data/README.md` for raw dataset.
+   This dataset includes 7214 instances and 53 attributes.
+   Sensitive attributes are Race and Gender.
+   Privileged Groups are Caucasian and male.
+   Predicts whether defendant will recidiviate within two years.
+   
+   Data specific pre-processing is done.
+   """
+    
+
     def __init__(self, scale = True):
         
         #1. Define class attributes belonging to compas Dataset
@@ -30,7 +40,7 @@ class CompasData():
                     "v_screening_date", "in_custody", "out_custody", 
                     "priors_count", "start", "end", "event"]
         
-        #Selecting done like these two
+        #Filtering done as here:
         #https://github.com/propublica/compas-analysis/blob/master/Compas%20Analysis.ipynb
         #https://github.com/algofairness/fairness-comparison/blob/master/fairness/data/objects/PropublicaRecidivism.py
         dataframe = dataframe[(dataframe.days_b_screening_arrest <= 30) &
@@ -61,15 +71,6 @@ class CompasData():
                                                                              "Hispanic":"Other",
                                                                              "Asian": "Other"})
         self.sens_attributes_num = self.sensitive_attributes.replace({"African-American": 0, "Other": 1, "Male": 1, "Female": 0})
-            
-        #Created a binary sensitive attr out of race but can I also leave it non-binary?
-        #sens_numerical_arr = self.sensitive_attributes.replace({'Male': 1, 'Female': 0, 'Caucasian': 1, 'Other': 1, 
-        #                                                        'African-American': 0, 'Hispanic': 1, 'Asian': 1})
-        #self.sens_numerical_arr = sens_numerical_arr
-        
-        #self.X_numerical = self.X_numerical.drop(['sex_Female', 'sex_Male', 'race_African-American',
-        #                                          'race_Caucasian', 'race_Other', 'race_Hispanic'
-        #                                          'race_Asian'], axis = 1)
 
         #4. Create numerical labels and scale data. Format: Numerical-Binary
         if scale:
@@ -82,6 +83,13 @@ class CompasData():
             
     #5. Split data into training and testing data.
     def train_test_split(self, train_size = 0.8, val = None, sensitive = 'sex'):
+    """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
+        'sensitive': Choose which sensitive attribute to split on, allowed inputs: 'sex' and 'race'
+        Returns
+        -------
+        pd.DataFrame
+            Train and test splits on X, y, sensitive attributes S, sensitive attributes numerical S_num, other sensitive attribute S_oth
+        """
         print("splitting on", sensitive)
         X_train, X_test, y_train, y_test, S_train, S_test, S_train_num, S_test_num = train_test_split(self.X_preprocessed,
                                                                                                       self.y,
