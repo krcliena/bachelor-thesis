@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation and Fairlearn contributors.
 # Licensed under the MIT License.
+# Corresponding repository https://github.com/fairlearn/fairlearn/tree/main/fairlearn
 
 import numpy as np
 import pandas as pd
