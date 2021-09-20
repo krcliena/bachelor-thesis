@@ -4,10 +4,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 class AdultData():
-    
-    #Export preprocessed data? 
-    #Drop sensitive attribute from df after preprocessing?
-    #drop fnlwgt?!!!!!!!!!!!
+"""Adult Census Income Data. 
+   See :file:`fairML/data/README.md` for raw dataset.
+   This dataset includes 48,842 instances and 14 attributes.
+   Sensitive attributes are Race and Gender.
+   Privileged Groups are White and Male.
+   Predicts whether an individual will make >50K/year.
+   
+   Data specific pre-processing is done.
+   """
+
     def __init__(self, scale = True):
         
         #1. Define class attributes belonging to Adult Dataset
@@ -20,18 +26,9 @@ class AdultData():
         self.df = self.df.replace({' Black': 'Black', ' White': 'Other', ' Other': 'Other', 
                                    ' Amer-Indian-Eskimo': 'Other', ' Asian-Pac-Islander': 'Other'})
         #self.pos_class = '>50K'
-        #Is this copy necessary, if I were to use self.df.replace would it be a reference to the obj?
         dataframe = self.df.copy()
-        
-        #Individuals with "workclass" = "Never-worked" have an occupation of '?',
-        #replace these "?" with "No-occupation". Drop rest. 
-        #indices = dataframe[dataframe["workclass"] == " Never-worked"].index
-        #for index in indices:
-        #    dataframe.loc[index, 'occupation'] = ' No-occupation'
-        
-        #!!!!!!!!!!!!!!!!!!
+
         #2. Drop missing data, missing label indication: '?'
-        #df_dropped = dataframe.replace(' ?', np.nan).dropna()
         dataframe = dataframe.replace(' ?', np.nan)
         
         #3. Define attributes, sensitive and target data
@@ -44,10 +41,7 @@ class AdultData():
         #(rows,columns)
         #self.shape = df_dropped.shape
         self.attributes = self.X.columns
-        #Copy of pd.get_dummies(self.X)?
         self.X_numerical = pd.get_dummies(self.X.replace({"Black":0, "Other":1}))
-        #self.X_numerical = self.X_numerical.drop("sex", axis =1)
-        #self.names = self.X_numerical.columns
         
         #4. Create numerical labels and scale data. Format: Numerical-Binary
         if scale:
@@ -59,8 +53,15 @@ class AdultData():
             self.X_preprocessed = X_preprocessed
         
             
-    #5. Split data into training and testing data.
+
     def train_test_split(self, train_size= 0.8, val= None, X = None, sensitive = 'sex'):
+        """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
+        'sensitive': Choose which sensitive attribute to split on, allowed inputs: 'sex' and 'race'
+        Returns
+        -------
+        pd.DataFrame
+            Train and test splits on X, y, sensitive attributes S, sensitive attributes numerical S_num, other sensitive attribute S_oth
+        """
         print("Splitting on sensitive attribute:", sensitive)
         if X is None:
             X = self.X_preprocessed
