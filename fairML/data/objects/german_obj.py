@@ -61,6 +61,10 @@ class GermanData():
     def train_test_split(self, train_size = 0.8, val = None, sensitive = 'age'):
         """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
         'sensitive': Choose which sensitive attribute to split on, allowed inputs: 'sex' and 'age'
+        
+        Parameters
+        ----------
+        
         Returns
         -------
         pd.DataFrame
