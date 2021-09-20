@@ -3,6 +3,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 class RicciData():
+"""Ricci v. DeStefano Data. 
+   See :file:`fairML/data/README.md` for raw dataset.
+   This dataset includes 118 instances and 5 attributes.
+   Sensitive attribute is Race.
+   Privileged Groups are Other.
+   Predicts whether an individual is likely to receive a promotion.
+   
+   Data specific pre-processing is done.
+   """
     
     #Export preprocessed data? 
     def __init__(self, scale = True):
@@ -14,13 +23,11 @@ class RicciData():
         self.sens_group_name = 'B'
         self.non_sens_group_name = 'O'
         #self.pos_class = 'Promotion'
-        #Is this copy necessary, if I were to use self.df.replace would it be a reference to the obj?
         dataframe = self.df.copy()
         
         #3. Define attributes, sensitive and target data
         self.X = dataframe.drop('Promotion', axis = 1)
         self.target = dataframe["Promotion"]
-        #Transform target class into binary numerical, '>50K' is positive class
         self.y = (dataframe["Promotion"] == 'Promotion') * 1
         self.sensitive_attributes = dataframe["Race"]
         self.sensitive_attributes_binary = dataframe["Race"].replace({"W": "O", "H": "O"})
@@ -34,7 +41,6 @@ class RicciData():
         
         #4. Create numerical labels and scale data. Format: Numerical-Binary
         if scale:
-            #Is a copy necessary? 
             X_numerical = self.X_numerical.copy()
             sc = StandardScaler()
             X_preprocessed = sc.fit_transform(X_numerical)
@@ -43,6 +49,13 @@ class RicciData():
             
     #5. Split data into training and testing data.
     def train_test_split(self, train_size = 0.8, val = None, sensitive = None):
+     """Serves as a wrapper around Scikit-learn's train_test_split function. Returns the train and test splits on the data.
+        'sensitive': Choose which sensitive attribute to split on, since only one exits, default is None.
+        Returns
+        -------
+        pd.DataFrame
+            Train and test splits on X, y, sensitive attributes S, sensitive attributes numerical S_num
+        """
         X_train, X_test, y_train, y_test, S_train, S_test, S_train_num, S_test_num = train_test_split(
                                                             self.X_preprocessed,
                                                             self.y,
