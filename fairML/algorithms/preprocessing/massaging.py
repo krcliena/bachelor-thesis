@@ -1,14 +1,20 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-# =====================================================================================
-# Instead of passing X_train, y_train, etc. to the function, should I pass Dataset obj?
-# =====================================================================================
+
 class Massaging():
-    
-    #Do I need init func?
-    #Include specific format for Datasets, sensitive array has to be binary!
+"""References:
+        Kamiran, Faisal, and Toon Calders. "Data preprocessing techniques 
+        for classification without discrimination." Knowledge and Information Systems 33.1 (2012):
+    """
+
     def __init__(self, X_train: np.ndarray, y_train: np.ndarray, S_train: np.ndarray,
                  sens_group_name, non_sens_group_name, clf = LogisticRegression(max_iter = 1000)):
+    """Parameters
+        ----------
+            sens_group_name: Name of privileged group 
+            non_sens_group_name: Name of unprivileged group
+            clf: Classifier to use for training, default is LogisticRegression()
+        """
         self.X_train = X_train
         self.y_train = y_train
         self.S_train = S_train
@@ -22,14 +28,19 @@ class Massaging():
         self.sens_numerical_arr = sens_numerical_arr
         
     def calculate_m(self):
-        #from Social Data Science Home Assgn 3
-        #using m = e * ((n_sensitive * n_nonsensitive) / (n)), 
-        # e = r_pos_nonsens - r_pos_sens
+     """
+        Calculate number of labels to massage
+        using m = e * ((n_sensitive * n_nonsensitive) / (n)), 
+        e = r_pos_nonsens - r_pos_sens
+        
+        Returns
+        -------
+        m (int): Number of labels to massage
+        """
         #1. Calculate number of sensitive versus non-sensitive group members
         n_sens = len(self.sens_numerical_arr[self.sens_numerical_arr == 0])
         n_non_sens = len(self.sens_numerical_arr[self.sens_numerical_arr == 1])
-        
-        #Using dataframe is less code?
+
         n_pos_sens = 0
         n_pos_non_sens = 0
         for i in range(len(self.S_train)):
@@ -47,6 +58,13 @@ class Massaging():
         return round(m)
     
     def repair_training_data(self) -> np.ndarray:
+   """
+        Repair training data by changing labels of y_train
+     
+        Returns
+        -------
+        m (int): Massaged y_train which is used in training
+        """
         #np.copy(self.y_train)
         y_msg = self.y_train.copy()
         self.clf.fit(self.X_train, self.y_train)
@@ -54,10 +72,12 @@ class Massaging():
         #here we're only interested in the probability it belongs to the + class
         #We assume that higher scores indicate a higher chance to be in the positive class
         y_score = self.clf.predict_proba(self.X_train)[:,1]
-        #female applicants with - in descending order (unprivileged)
-        #male applicants with + in ascending order (privileged)
+        
+        #applicants with - in descending order (unprivileged)
+        #applicants with + in ascending order (privileged)
         scores_sens = np.zeros(shape = (1,2))
         scores_non_sens = np.zeros(shape = (1,2))
+        
         #calculate scores in ascending and descending orders resp.
         for i in range(len(y_score)):
             #unpriv group, sensitive_features = 1 means person belongs to sensitive group
@@ -83,14 +103,21 @@ class Massaging():
         self.y_msg = y_msg
         return y_msg
     
-    #new clf?
     def fit(self):
+    """
+        Repair data then train on the repaired data using classifier clf. 
+        """
         y_msg = self.repair_training_data()
         #Is that correct?
         self.clf.fit(self.X_train, y_msg)
         return self
     
     def predict(self, X_test):
+    """
+        Returns
+        -------
+        y_pred: Predicted outcomes after doing fairness-enhancment
+        """
         y_pred = self.clf.predict(X_test)
         return y_pred
     
