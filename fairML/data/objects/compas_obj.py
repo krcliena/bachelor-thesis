@@ -54,16 +54,12 @@ class CompasData():
         dataframe = dataframe.drop(features_to_drop, axis = 1).dropna()
         #3. Define attributes, sensitive and target data
         self.X = dataframe.drop('two_year_recid', axis = 1)
-        #self.target = dataframe["two_year_recid"]
         self.y = dataframe['two_year_recid']
-        #(rows,columns)
-        #self.shape = dataframe.shape
         self.attributes = self.X.columns
         #Sensitive attributes sex and race transformed into binary labels first
         self.X_numerical = self.X.replace({'Male': 1, 'Female': 0, 'Caucasian': 1, 'Other': 1, 
                                            'African-American': 0, 'Hispanic': 1, 
                                            'Asian': 1, 'Native American': 1})
-        #Copy of pd.get_dummies(self.X)?
         self.X_numerical = pd.get_dummies(self.X_numerical)
         #self.names = self.X_numerical.columns
         self.sensitive_attributes = dataframe[self.sens_attr_names].replace({"Caucasian": "Other", 
