@@ -10,8 +10,8 @@ https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients
 **3. Ricci**\
 https://www.openml.org/d/42665
 
-**4. German**
+**4. German**\
 https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)
 
-**5. Compas**
+**5. Compas**\
 https://github.com/propublica/compas-analysis
