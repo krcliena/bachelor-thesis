@@ -1,21 +1,20 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun 20 20:35:47 2021
-
-@author: Karine Louis
-"""
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-# =====================================================================================
-# Instead of passing X_train, y_train, etc. to the function, should I pass Dataset obj?
-# =====================================================================================
+
 class PreferentialSampling():
-    
-    #Do I need init func?
-    #Include specific format for Datasets, sensitive array has to be binary!
+"""References:
+        Kamiran, Faisal, and Toon Calders. "Data preprocessing techniques 
+        for classification without discrimination." Knowledge and Information Systems 33.1 (2012):
+    """    
     def __init__(self, X_train: np.ndarray, y_train: np.ndarray, S_train: np.ndarray,
                  sens_group_name, non_sens_group_name, clf = LogisticRegression(max_iter=1000)):
+    """Parameters
+        ----------
+            sens_group_name: Name of privileged group 
+            non_sens_group_name: Name of unprivileged group
+            clf: Classifier to use for training, default is LogisticRegression()
+        """
         self.X_train = X_train
         self.y_train = y_train
         self.S_train = S_train
@@ -29,7 +28,11 @@ class PreferentialSampling():
         self.sens_numerical_arr = sens_numerical_arr
         
     def calculate_W(self, s, c):
-        
+    """ Calculate weights for different sensitive attribute and class label combinitations.
+        Returns
+        -------
+        w_s_c (float): Weight of class c with sensitive attribute value s
+        """
         #W(s,c) := (n_sens = s * n_class = c) / (n * n_sens_class)
         nr_s = len(self.sens_numerical_arr[self.sens_numerical_arr == s])
         nr_c = len(self.y_train[self.y_train==c])
@@ -48,36 +51,9 @@ class PreferentialSampling():
         # print("w_s_c with s=",s, "and c=", c, w_s_c)
         return w_s_c
     
-    def calc_exp_size(self, s, c):
-        nr_s = len(self.sens_numerical_arr[self.sens_numerical_arr == s])
-        nr_c = len(self.y_train[self.y_train==c])
-        nr_s_c = 0
-        n = len(self.y_train)
-        
-        for i in range(len(self.y_train)):
-            if self.sens_numerical_arr[i] == s and self.y_train[i] == c:
-                nr_s_c = nr_s_c + 1
-                
-        exp_size = (nr_s * nr_c) / (n)
-        print("nr_s:", nr_s)
-        print("nr_c:", nr_c)
-        print("nr_s_c:", nr_s_c)
-        print("n:", n)
-        print("exp_size with s=",s, "and c=", c, exp_size)
-        return exp_size
-    
-    def repair_training_data_new(self):
-        exp_DP = self.calc_exp_size(0, 1)
-        exp_DN = self.calc_exp_size(0, 0)
-        exp_FP = self.calc_exp_size(1, 1)
-        exp_FN = self.calc_exp_size(1, 0)
-        
-        print("expected DP:", exp_DP)
-        print("expected DN:", exp_DN)
-        print("expected FP:", exp_FP)
-        print("expected FN:", exp_FN)
     def repair_training_data(self) -> np.ndarray:
-    
+       """
+        Repair training data as definition of Preferential Sampling as follows:
         #1. Add W(sens,pos) copies of sens_pos to ps_arr
         #2. Add W(sens, pos) - (W(sens,pos) * n_sens_pos) lowest ranked elements of sens_pos to ps_arr
         #3. Add W(sens, neg) * n_sens_neg lowest ranked elements of sens_neg to ps_arr
@@ -85,6 +61,11 @@ class PreferentialSampling():
         #5. Add W(non_sens, neg) copies of non_sens_neg to ps_arr
         #6. Add W(non_sens, neg) - (W(sens,neg)*non_sens_neg) highest ranked elements of non_sens_neg to ps_arr
         #7. Return sampled X_train, y_train and A_train
+     
+        Returns
+        -------
+        repaired Data (pd.DataFrame)
+        """
         
         W = [[0,0],[0,0]]
         for i in [0,1]:
@@ -178,12 +159,20 @@ class PreferentialSampling():
 
 
     def fit(self):
+    """
+        Repair data then train on the repaired data using classifier clf. 
+        """
         X_train, y_train, S_train = self.repair_training_data()
         #Is that correct?
         self.clf.fit(X_train, y_train)
         return self
     
     def predict(self, X_test):
+    """
+        Returns
+        -------
+        y_pred: Predicted outcomes after doing fairness-enhancment
+        """
         y_pred = self.clf.predict(X_test)
         return y_pred
     
