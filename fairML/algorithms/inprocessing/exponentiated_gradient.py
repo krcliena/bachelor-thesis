@@ -1,7 +1,11 @@
 from fairlearn.reductions import ExponentiatedGradient, DemographicParity, EqualizedOdds
 from sklearn.linear_model import LogisticRegression
 
-#Is ExponentiatedGradient same as GridSearch ?
+""" Creates Wrapper around ExponentiatedGradient reductions approach from Fairlearn
+    Copyright (c) Microsoft Corporation and Fairlearn contributors. 
+    Licensed under the MIT License.
+    Corresponding repository https://github.com/fairlearn/fairlearn/tree/main/fairlearn
+    """
 
 class Exponentiated_Gradient():
     
