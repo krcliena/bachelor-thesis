@@ -1,6 +1,3 @@
-#Classification classes need to be {-1,1} instead of {0,1}
-#Wrapper class for Zafar et al
-
 import fair.algorithms.inprocessing.fair_classification.main as main 
 import fair.algorithms.inprocessing.fair_classification.utils as ut
 import numpy as np
@@ -8,7 +5,6 @@ import pandas as pd
 
 class DisparateImpactScore():
     
-    #give already splitted data or give dataframe and split here?
     def __init__(self):
         return None
     
