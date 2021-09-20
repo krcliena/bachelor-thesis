@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 
 class DisparateImpactScore():
+"""Reference: Zafar, Muhammad Bilal, et al. "Fairness constraints: Mechanisms for fair classification." Artificial Intelligence and Statistics. PMLR, 2017.
+   Creates Wrapper around Zafar et al.'s code.
+   """
     
     def __init__(self):
         return None
